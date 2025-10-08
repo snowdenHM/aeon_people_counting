@@ -1,0 +1,18 @@
+[
+    {
+        "nvr":"Lumina",
+        "nvr_serial":"GV-3602-K",
+        "name": "Channel-1",
+        "floor": 1,
+        "zone": 2,
+        "rtsp": "rtsp://admin:Gvd@6001@45.64.11.69:80/rtsp/streaming?channel=1&subtype=1"
+    },
+    {
+        "nvr":"Lumina",
+        "nvr_serial":"GV-3602-K",
+        "name": "Channel-20",
+        "floor": 1,
+        "zone": 3,
+        "rtsp": "rtsp://admin:Gvd@6001@45.64.11.69:80/rtsp/streaming?channel=20&subtype=1"
+    }
+]

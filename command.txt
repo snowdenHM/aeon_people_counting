@@ -1,0 +1,19 @@
+python server.py \
+  --config config.json \
+  --model yolov8n.pt \
+  --mqtt-broker mqtt.geniusvision.in \
+  --mqtt-port 1883 \
+  --mqtt-topic aeon \
+  --interval 20
+
+
+  python server.py \
+  --config config.json \
+  --model yolov8n.pt \
+  --mqtt-broker bsm-in.ficodeapps.com \
+  --mqtt-port 47610 \
+  --mqtt-topic bsm-india-01 \
+  --mqtt-user mqtt_user \
+  --mqtt-pass d2Onx4V2XKzsmA7KYiRxmQ== \
+  --interval 20
+

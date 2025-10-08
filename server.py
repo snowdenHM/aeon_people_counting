@@ -3,6 +3,7 @@ import json
 import time
 import uuid
 import argparse
+import pytz
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
 
@@ -11,16 +12,27 @@ from ultralytics import YOLO
 import paho.mqtt.client as mqtt
 
 
+def get_kolkata_time() -> datetime:
+    """
+    Get current time in Asia/Kolkata timezone.
+    Returns:
+        datetime object in Asia/Kolkata timezone
+    """
+    kolkata_tz = pytz.timezone('Asia/Kolkata')
+    return datetime.now(kolkata_tz)
+
+
 def is_within_operating_hours(start_hour: int = 9, end_hour: int = 19) -> bool:
     """
-    Check if current time is within operating hours.
+    Check if current time is within operating hours using Asia/Kolkata timezone.
     Args:
         start_hour: Start hour in 24-hour format (default: 9 for 9AM)
         end_hour: End hour in 24-hour format (default: 19 for 7PM)
     Returns:
         True if current time is within operating hours, False otherwise
     """
-    current_hour = datetime.now().hour
+    kolkata_time = get_kolkata_time()
+    current_hour = kolkata_time.hour
     return start_hour <= current_hour < end_hour
 
 
@@ -133,10 +145,10 @@ def build_payload_by_nvr(cam_cfgs: List[Dict[str, Any]], counts: List[int]) -> L
         nvr_name = cam.get("nvr", "Unknown")
         nvr_groups[nvr_name].append((cam, counts[i]))
 
-    # Get current date and time
-    now = datetime.now()
-    date_str = now.strftime("%d%m%Y")  # DDMMYYYY format
-    time_str = now.strftime("%H%M%S")  # HHMMSS format
+    # Get current date and time in Asia/Kolkata timezone
+    kolkata_time = get_kolkata_time()
+    date_str = kolkata_time.strftime("%d%m%Y")  # DDMMYYYY format
+    time_str = kolkata_time.strftime("%H%M%S")  # HHMMSS format
 
     payloads = []
 
@@ -315,14 +327,15 @@ def main():
     model = YOLO(args.model)
 
     print(f"[INFO] Starting loop: interval={args.interval}s, cameras={len(cams)}")
-    print(f"[INFO] Operating hours: {args.start_hour:02d}:00 - {args.end_hour:02d}:00")
+    print(f"[INFO] Operating hours: {args.start_hour:02d}:00 - {args.end_hour:02d}:00 (Asia/Kolkata)")
 
     try:
         while True:
             # Check if current time is within operating hours
             if not is_within_operating_hours(args.start_hour, args.end_hour):
-                current_time = datetime.now().strftime("%H:%M:%S")
-                print(f"[INFO] Outside operating hours ({current_time}), skipping inference. Next check in {args.interval}s")
+                kolkata_time = get_kolkata_time()
+                current_time = kolkata_time.strftime("%H:%M:%S")
+                print(f"[INFO] Outside operating hours ({current_time} IST), skipping inference. Next check in {args.interval}s")
                 time.sleep(max(1, args.interval))
                 continue
 
